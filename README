@@ -1,46 +1,52 @@
-Gerne – ich habe dir die Anleitung sauber ins Deutsche übersetzt und etwas strukturiert, damit sie leichter lesbar ist.
+````markdown
+# FritzingCheckPart.py – Deutsche Anleitung
+
+## Beschreibung
+
+`FritzingCheckPart.py` ist ein Python-Skript zur Überprüfung von Bauteildateien für das EDA-Programm Fritzing.
+
+Ursprünglich wurde es entwickelt, um Probleme mit SVG-Dateien aus Inkscape zu beheben. Inzwischen prüft es:
+
+- `.fzp`-Dateien (Bauteildefinition)
+- `.svg`-Dateien (Grafiken)
+- Struktur eines Fritzing-Parts
+
+Zusätzlich kann es:
+
+- XML „pretty printen“
+- CSS-Styles in Inline-Attribute umwandeln
+- SVG-Dateien Fritzing-kompatibel machen
+
+Ein separates Skript `PP.py` dient nur zur XML-Formatierung.
 
 ---
 
-# 📘 **FritzingCheckPart.py – Übersetzte Anleitung**
+## Voraussetzungen
 
-## 🧾 Beschreibung
-
-`FritzingCheckPart.py` ist ein Python-Skript zur Überprüfung von Bauteildateien für das EDA-Programm **Fritzing**.
-
-Ursprünglich wurde es entwickelt, um Probleme zu beheben, die durch SVG-Dateien entstehen, die mit **Inkscape** erzeugt wurden. Inzwischen prüft es:
-
-* die `.fzp`-Dateien (Bauteilbeschreibung)
-* die `.svg`-Dateien (Grafiken für Breadboard, PCB, etc.)
-* die allgemeine Struktur eines Fritzing-Parts
-
-Zusätzlich kann das Skript:
-
-* XML-Dateien „schön formatieren“ (Pretty Print)
-* CSS-Styles in Inline-Attribute umwandeln (wichtiger für Fritzing!)
-* SVGs für bessere Kompatibilität anpassen
-
-Ein separates Skript `PP.py` ist enthalten, das nur XML hübsch formatiert – ohne Fritzing-spezifische Änderungen.
+- Python 3
+- lxml (`pip install lxml`)
 
 ---
 
-## ⚙️ Installation
+## Installation
 
-### Voraussetzungen
+### Linux / Ubuntu
 
-* Python 3
-* `lxml`-Bibliothek (XML-Verarbeitung)
+```bash
+sudo cp FritzingCheckPart.py /usr/local/bin
+sudo cp FritzingTools.py /usr/local/bin
+sudo cp PP.py /usr/local/bin
+sudo cp PPTools.py /usr/local/bin
 
----
+chmod ugo+x /usr/local/bin/*.py
+````
 
-### 🪟 Windows
+### Windows (Cygwin empfohlen)
 
-Empfohlen wird die Nutzung über **Cygwin**.
+Pakete installieren:
 
-Installiere in Cygwin:
-
-* `python3`
-* `python3-lxml`
+* python3
+* python3-lxml
 
 Dann:
 
@@ -51,144 +57,97 @@ chmod ugo+x /usr/local/bin/*.py
 
 ---
 
-### 🐧 Linux (Ubuntu)
+## Nutzung
 
-```bash
-sudo cp FritzingCheckPart.py /usr/local/bin
-sudo cp FritzingTools.py /usr/local/bin
-sudo cp PP.py /usr/local/bin
-sudo cp PPTools.py /usr/local/bin
-
-chmod ugo+x /usr/local/bin/*.py
-```
-
-👉 Python3 und lxml sind meist schon installiert.
-
----
-
-### 🍏 macOS
-
-Nicht getestet – sollte aber funktionieren.
-
----
-
-## 🧪 Test
-
-Beispiel:
-
-```bash
-mkdir tst
-
-FritzingCheckPart.py fritzing-parts/core tst
-```
-
-👉 Prüft alle Core-Parts und gibt viele Fehlermeldungen aus (normal!).
-
----
-
-## 🚀 Nutzung
-
-### 1️⃣ Verzeichnis → Verzeichnis
+### 1. Verzeichnis → Verzeichnis
 
 ```bash
 FritzingCheckPart.py src_dir dst_dir
 ```
 
-* verarbeitet alle Parts aus `src_dir`
-* schreibt Ergebnisse nach `dst_dir`
-* `dst_dir` muss leer sein!
-
-👉 wird hauptsächlich zum Testen oder Massenkorrekturen verwendet
+* verarbeitet alle Parts
+* `dst_dir` muss leer sein
 
 ---
 
-### 2️⃣ Einzelner Part (.fzp)
+### 2. Einzelnes Part prüfen
 
 ```bash
 FritzingCheckPart.py part.fzp
 ```
 
-* verarbeitet:
-
-  * `.fzp`
-  * alle zugehörigen SVGs
-* Originaldateien werden als `.bak` gesichert
-* korrigierte Version ersetzt die Originaldatei
-
-👉 danach wieder zippen → `.fzpz`
+* erstellt `.bak` Backup
+* korrigiert `.fzp` und SVGs
 
 ---
 
-### 3️⃣ User-Parts-Verzeichnis
+### 3. User-Parts prüfen
 
 ```bash
 FritzingCheckPart.py parts/user/filename.fzp
 ```
 
-👉 verarbeitet automatisch alle zugehörigen SVGs im Standard-Fritzing-User-Ordner
-
 ---
 
-### 4️⃣ Nur SVG prüfen
+### 4. Nur SVG prüfen
 
 ```bash
 FritzingCheckPart.py file.svg
 ```
 
-Macht u.a.:
+Funktionen:
 
-* wandelt `style="..."` → Inline-Attribute um
-* entfernt `px` bei `font-size`
-* korrigiert Silkscreen-Farben (weiß → schwarz)
-* prüft Terminal-Größen (0 → Problem!)
-* behebt Vererbungsprobleme (`stroke-width` für Gerber!)
+* CSS → Inline-Attribute
+* entfernt `px` bei Schriftgrößen
+* korrigiert Silkscreen-Farbe
+* erkennt fehlerhafte Pads
+* behebt Gerber-Probleme
 
-👉 **sehr wichtig nach Inkscape-Bearbeitung**
+👉 Wichtig nach jeder Inkscape-Bearbeitung!
 
 ---
 
-## 🧼 Pretty Print (XML formatieren)
+## Pretty Print (XML formatieren)
 
 ```bash
 PP.py file.svg
 ```
 
-* formatiert XML sauber
-* Original → `.bak`
-* kann bei komplexem XML Fehler machen → vorsichtig nutzen
+* formatiert XML
+* erstellt `.bak` Datei
 
 ---
 
-## ⚙️ Konfiguration
+## Konfiguration
 
-### In `PPTools.py`
+### PPTools.py
 
 ```python
 DetailPP = 'y'
 ```
 
-* `'n'` → weniger aggressives Pretty Printing
+* `'n'` → weniger aggressives Formatting
 
 ---
 
-### In `FritzingTools.py`
+### FritzingTools.py
 
 ```python
 ModifyTerminal = 'n'
 ```
 
-* `'y'` → setzt 0-Größe von Pins automatisch auf 10
-* ⚠️ verschiebt Position → muss manuell korrigiert werden
+* `'y'` → setzt 0-Größe von Pins auf 10
+* ⚠️ Position muss danach geprüft werden
 
 ---
 
-### In `FritzingCheckPart.py`
+### FritzingCheckPart.py
 
 ```python
 IssueNameDupWarning = 'y'
 ```
 
-* `'n'` → unterdrückt Warnung über doppelte Namen
+* `'n'` → weniger Warnungen
 
 ```python
 Debug = 0
@@ -198,95 +157,95 @@ Debug = 0
 
 ---
 
-## ⚠️ Wichtige Hinweise
+## Wichtige Hinweise
 
-### 🔥 Nach jeder Inkscape-Bearbeitung:
+### Nach Inkscape-Bearbeitung
 
-👉 Script ausführen!
+Immer ausführen:
 
-Warum:
+```bash
+FritzingCheckPart.py file.svg
+```
 
-* Inkscape erzeugt CSS-Styles → Fritzing kann die teilweise nicht
-* Script konvertiert alles korrekt
+Grund:
 
----
-
-### 💾 Backup-Verhalten
-
-* Originaldateien werden als `.bak` gespeichert
-* ⚠️ Bei erneutem Ausführen werden diese überschrieben!
-
-👉 also ggf. vorher sichern
+* Inkscape nutzt CSS → Fritzing nicht vollständig kompatibel
 
 ---
 
-## 🐞 Bekannte Probleme
+### Backups
 
-* Pretty Print kann XML kaputt machen (selten)
-* Pads ohne Radius → falsche Fehlermeldung
-* Unicode-Probleme mit Python 2
-
----
-
-## ❗ Typische Fehlerarten
-
-### Parser-Fehler
-
-→ ungültiges XML (z. B. fehlende Leerzeichen)
-
-👉 immer korrigieren!
+* Originaldateien → `.bak`
+* ⚠️ werden beim erneuten Ausführen überschrieben
 
 ---
 
-### Connector-Fehler
+## Typische Fehler
 
-* fehlen in SVG oder FZP
+### XML-Fehler
+
+* fehlende Leerzeichen
+* doppelte Attribute
+
+👉 müssen korrigiert werden
+
+---
+
+### Connector-Probleme
+
+* fehlen in SVG
 * falsche Reihenfolge
 * doppelte IDs
-
-👉 führen oft zu Problemen in Fritzing
 
 ---
 
 ### SVG-Probleme
 
 * `style` statt Attribute
-* `px` bei Größen
+* Maße in `px`
 * falsche Layer-Struktur
-* falsche Pad-Formen (Ellipse statt Kreis!)
+* Ellipsen statt Kreise
 
 ---
 
-## ⚠️ Typische Warnungen
+## Warnungen
 
-* falsche Fonts (nur **OCRA** oder **Droid Sans** funktionieren gut)
-* Maße in `px` → besser `in` oder `mm`
+* falsche Fonts (nur Droid Sans oder OCRA empfohlen)
 * fehlende Views
 * doppelte Namen
+* Maße in `px`
 
 ---
 
-## 🛠️ Automatische Änderungen durch das Script
+## Automatische Änderungen
 
 Das Script kann:
 
-* `style="..."` → `fill="..." stroke="..."` umwandeln
+* `style="..."` → Inline-Attribute
 * `font-size="3.5px"` → `3.5`
 * Silkscreen-Farbe korrigieren
-* Terminal-Größe anpassen (optional)
+* Terminalgrößen anpassen
 
 ---
 
-## 💡 Fazit
+## Fazit
 
-Das Tool ist extrem hilfreich, weil es:
+Sehr hilfreiches Tool für:
 
-* typische Fritzing-Probleme automatisch erkennt
-* Inkscape-Inkompatibilitäten behebt
-* Gerber-Fehler verhindert
+* saubere Fritzing-Parts
+* Fehleranalyse
+* Inkscape-Kompatibilität
+* korrekte Gerber-Erstellung
 
-👉 **Pflicht-Tool für saubere Parts**
+👉 Empfehlung: Immer vor dem Export ausführen
+
+```
 
 ---
 
-Wenn du möchtest, kann ich dir auch eine **„Best Practices“-Checkliste für Fritzing-Parts** daraus zusammenstellen – das spart dir später viel Debugging.
+## 💡 Wenn du wirklich HTML willst
+
+Sag Bescheid – ich kann dir das 1:1 in **reines HTML** umwandeln.  
+Aber: Für GitHub ist Markdown klar die bessere Wahl.
+```
+
